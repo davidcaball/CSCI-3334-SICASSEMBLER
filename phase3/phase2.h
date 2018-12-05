@@ -31,39 +31,39 @@ int LOCCTR = 0;
 
 // char * OPTAB[] = 
 
-int main(){
+// int main(){
 
 
-	// char label[20];
-	// char opcode[20];
-	// char operand[20]; 
-	// char comment[100]; 
+// 	// char label[20];
+// 	// char opcode[20];
+// 	// char operand[20]; 
+// 	// char comment[100]; 
 
-	// zeroOut(label, 20);
-	// zeroOut(opcode, 20);
-	// zeroOut(operand, 20);
-	// zeroOut(comment, 100);
+// 	// zeroOut(label, 20);
+// 	// zeroOut(opcode, 20);
+// 	// zeroOut(operand, 20);
+// 	// zeroOut(comment, 100);
 
-	// splitString("CLOOP   JSUB    RDREC		READ INPUT RECORD",label, opcode, operand, comment);
-
-
-	// printf("Label:%s|\nOpcode:%s|\nOperand:%s|\nComment:%s|\n", label, opcode, operand, comment);
+// 	// splitString("CLOOP   JSUB    RDREC		READ INPUT RECORD",label, opcode, operand, comment);
 
 
-	FILE * file;
+// 	// printf("Label:%s|\nOpcode:%s|\nOperand:%s|\nComment:%s|\n", label, opcode, operand, comment);
 
-	file = fopen("./source.asm.txt", "r");
+
+// 	FILE * file;
+
+// 	file = fopen("./source.asm.txt", "r");
 
 
 	
 
 
-	pass1(file);
+// 	pass1(file);
 	
 
 
-	return 0;
-}
+// 	return 0;
+// }
 
 void pass1(FILE * file){
 

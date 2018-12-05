@@ -467,7 +467,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 	int writingTo = 0; //Represents the current char array being written to. label = 0, opcode = 1, operand = 2, comment = 3
 	int inSpaces = 0; //represents that repetetive spaces are being found
 
-
+	// set all elements to 0
 	zeroOut(label, 20);
 	zeroOut(opcode, 20);
 	zeroOut(operand, 20);
@@ -476,7 +476,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 	int j = 0; //represents index of current argument
 	int i = 0;
 
-
+	//Check if line is a comment
 	if(line[0] == '.'){
 		for(int i = 0; i < 256; i++){
 			if(comment[i] == '\n')
@@ -488,7 +488,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 	}
 
 
-	
+	//loop untill null terminator
 	while(line[i] != 0){
 
 		// if(DEBUGGING == 1)
@@ -505,7 +505,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 				i++;
 				continue;
 			}
-			else{
+			else{ //null terminate appropriate char array
 				if(writingTo == 0) label[j + 1] = 0;
 				else if(writingTo == 1) opcode[j + 1] = 0;
 				else if(writingTo == 2) operand[j + 1] = 0;
@@ -555,7 +555,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 		i++;
 	}
 
-
+	//hotfix fix any newlines in the label
 	for(int i = 0; i < 20; i++){
 		if(label[i] == '\n' )
 			label[i] = 0;
