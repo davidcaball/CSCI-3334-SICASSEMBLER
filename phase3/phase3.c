@@ -84,7 +84,7 @@ int main(){
 
 	printf("Done Creating Int...\n");
 
-	char  test[256] = "0x3ee    0x00    	LDA	LENGTH		TEST FOR EOF (LENGTH = 0)";
+	char  test[256] = "0x3eb    0x48    CLOOP   JSUB    RDREC		READ INPUT RECORD";
  
  	printf("Starting SplitString2...\n");
 
@@ -143,6 +143,9 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 
 	//Check if line is a comment
 	if(line[0] == ' ' || line[0] == '.'){
+
+		
+
 		printf("LINE IS COMMENT\n");
 		*lineIsComment = 1;
 		for(int i = 0; i < 256; i++){
@@ -170,6 +173,11 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 
 		if(line[i] ==  ' ' || line[i] == 9){
 		
+			if(writingTo == 2 && !inSpaces){
+				writingTo = 3;
+				continue;
+			}
+
 
 			if(writingTo == 5){
 				comment[j] = line[i];
