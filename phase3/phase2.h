@@ -67,6 +67,7 @@ int LOCCTR = 0;
 
 void pass1(FILE * file){
 
+	printf("HERE\n");
 
 	FILE * intermFile;
 	FILE * symbolFile;
@@ -93,6 +94,15 @@ void pass1(FILE * file){
 	char opHex[4]; 
 	char opHexFormatted[10]; 
 
+
+	// char * label = calloc(20, sizeof(char));
+	// char * opcode = calloc(20, sizeof(char));
+	// char * operand = calloc(20, sizeof(char)); 
+	// char * comment = calloc(256, sizeof(char));
+	// char * opHex = calloc(4, sizeof(char)); 
+	// char * opHexFormatted = calloc(10, sizeof(char)); 
+
+
 	//Used for hex address
 	char address[5];
 
@@ -111,9 +121,15 @@ void pass1(FILE * file){
 
 	// printf("%d", getc(file));
 	//read first output line
+	printf("HERE1\n");
+
 	fgets(line, sizeof line, file);
+
+	printf("HERE2\n");
+
 	splitString(line, label, opcode, operand, comment);
 
+	
 	//Create Symbol Table
 	struct symTab SYMTAB;
 	initializeSymbolTable(&SYMTAB);
@@ -122,7 +138,7 @@ void pass1(FILE * file){
 	// Initialize OPTAB
 	initializeOpTab();
 
-
+	printf("HERE1\n");
 	
 	// printf("%d", strcmp(opcode, "START") == 0);
 
@@ -133,7 +149,8 @@ void pass1(FILE * file){
 		//printf("TRUE");
 		//begin
 			//save #[OPERAND] as starting address
-			startingAddress = atoi(operand);
+			long n = strtol(operand, NULL, 16);
+			startingAddress = n;
 			//initialize LOCCTR to starting address
 			LOCCTR = startingAddress;
 			//write line to intermediate file
@@ -149,15 +166,20 @@ void pass1(FILE * file){
 	}
 
 
-	sprintf(address, "0x%x    ", LOCCTR);
+	sprintf(address, "0x%x:", LOCCTR);
 	fputs(address, intermFile);
 	if(OpTabContains(opcode)) getOpCodeAddress(opcode, opHex);
-	sprintf(opHexFormatted, "%s    ", opHex);
+	sprintf(opHexFormatted, "%s:", opHex);
 	fputs(opHexFormatted, intermFile);
 
-
+	
 	lineNum++;
+	fputs(operand, intermFile);
+	fputs(":", intermFile);
+	fputs(opcode, intermFile);
+	fputs(";", intermFile);
 	fputs(line, intermFile);
+
 	fgets(line, sizeof line, file);
 	splitString(line, label, opcode, operand, comment);
 
@@ -193,7 +215,7 @@ void pass1(FILE * file){
 					}
 				}//end {if symbol}
 				
-				sprintf(address, "0x%x    ", LOCCTR);
+				sprintf(address, "0x%x:", LOCCTR);
 				fputs(address, intermFile);
 
 				//search OPTAB for OPCODE
@@ -202,8 +224,13 @@ void pass1(FILE * file){
 					//add 3 {instruction length} to LOCCTR
 
 					getOpCodeAddress(opcode, opHex);
-					sprintf(opHexFormatted, "%s    ", opHex);
+					
+					sprintf(opHexFormatted, "%s:", opHex);
 					fputs(opHexFormatted, intermFile);
+					fputs(operand, intermFile);
+					fputs(":", intermFile);
+					fputs(opcode, intermFile);
+					fputs(";", intermFile);
 
 					if(strcmp(opcode, "WORD") == 0){
 						//else if OPCODE = 'WORD' then
@@ -225,7 +252,10 @@ void pass1(FILE * file){
 						//else OPCODE = "BYTE" then
 						//find length of constant in bytes
 						//add length to LOCCTR
-						LOCCTR += findNumOfBytes(atoi(operand));
+						if(operand[0] == 'C')
+							LOCCTR += strlen(operand) - 3;
+						if(operand[0] == 'X')
+							LOCCTR += (strlen(operand) - 3) / 2;
 					}//end {if BYTE}
 					else LOCCTR += 3;
 				}
@@ -260,11 +290,16 @@ void pass1(FILE * file){
 	
 	//write last line to intermediate file
 
-	sprintf(address, "0x%x    ", LOCCTR);
+	sprintf(address, "0x%x:", LOCCTR);
 	fputs(address, intermFile);
 	if(OpTabContains(opcode)) getOpCodeAddress(opcode, opHex);
-	sprintf(opHexFormatted, "%s    ", opHex);
+	sprintf(opHexFormatted, "%s:", opHex);
 	fputs(opHexFormatted, intermFile);
+	fputs(operand, intermFile);
+	fputs(":", intermFile);
+	fputs(opcode, intermFile);
+	fputs(";", intermFile);
+	// fputs(operand, intermFile);
 	fputs(line, intermFile);
 	//save (LOCCTR - starting address) as program length
 
@@ -467,7 +502,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 	int writingTo = 0; //Represents the current char array being written to. label = 0, opcode = 1, operand = 2, comment = 3
 	int inSpaces = 0; //represents that repetetive spaces are being found
 
-
+	// set all elements to 0
 	zeroOut(label, 20);
 	zeroOut(opcode, 20);
 	zeroOut(operand, 20);
@@ -476,7 +511,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 	int j = 0; //represents index of current argument
 	int i = 0;
 
-
+	//Check if line is a comment
 	if(line[0] == '.'){
 		for(int i = 0; i < 256; i++){
 			if(comment[i] == '\n')
@@ -488,7 +523,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 	}
 
 
-	
+	//loop untill null terminator
 	while(line[i] != 0){
 
 		// if(DEBUGGING == 1)
@@ -505,7 +540,7 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 				i++;
 				continue;
 			}
-			else{
+			else{ //null terminate appropriate char array
 				if(writingTo == 0) label[j + 1] = 0;
 				else if(writingTo == 1) opcode[j + 1] = 0;
 				else if(writingTo == 2) operand[j + 1] = 0;
@@ -555,13 +590,13 @@ void splitString(char * line, char * label, char * opcode, char * operand, char 
 		i++;
 	}
 
-
+	//hotfix fix any newlines in the label
 	for(int i = 0; i < 20; i++){
-		if(label[i] == '\n' )
+		if(label[i] == '\n' || label[i] == '\r' )
 			label[i] = 0;
-		if(opcode[i] == '\n' )
+		if(opcode[i] == '\n' || opcode[i] == '\r' )
 			opcode[i] = 0;
-		if(operand[i] == '\n' )
+		if(operand[i] == '\n' || operand[i] == '\r')
 			operand[i] = 0;
 	}
 }
