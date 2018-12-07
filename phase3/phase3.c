@@ -3,20 +3,26 @@
 #include "phase2.h"
 
 void splitString2(char * line, char * lineAddr, char * opcode, char * label, char * opcodeHex, char * operand, char * comment, int * lineIsComment);
+char *  toUpperCase(char * string);
+
 
 void pass2(FILE * intermFile){
 
-	intermFile = fopen("interm.txt", "r");
+	FILE * objFile;
 
+	intermFile = fopen("interm.txt", "r");
+	objFile = fopen("obj.txt", "w");
 
 	char line[256];
 	char label[20];
 	char opcode[20];
 	char operand[20];
-	char operandAddress[20] 
+	char operandAddress[20];
 	char comment[256];
 	char lineAddr[20];
 	char opcodeHex[20];
+
+	char prefix[]
 
 	//Flag for if line is a comment
 	int lineIsComment;
@@ -34,29 +40,46 @@ void pass2(FILE * intermFile){
 			//write listing file
 				//TODO
 			//read next input line
-			fgets(line, sizeof line, intermFile);
-			splitString2(line, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
+			
 		}//end {if START}
 		
 
 
 		//write header record to object program
-			//TODO
+			fputs("H", objFile);
+			fputs(toUpperCase(programName), objFile);
+			printf("Writing: %s\n", programName);
+			for(int i = 0; i < 7 - strlen(programName); i++){
+				printf("Writing a Space\n");
+				fputs(" ", objFile);
+			}
+			for(int i = 0; i < 6 - strlen(operand); i++){
+				printf("Writing a 0\n");
+				fputs("0", objFile);
+			}
+			fputs(toUpperCase(operand), objFile);
+			printf("Writing: %s\n", operand);
+			for(int i = 0; i < 6 - strlen(programLength); i++){
+				printf("Writing a 0\n");
+				fputs("0", objFile);
+			}
+			fputs(toUpperCase(programLength), objFile);
+			printf("Writing: %s\n", programLength);
 		//initialize first text record
 			//TODO
 
 		//while OPCODE != END
-		while(strcmp(opcode, "END") != 0){
+		while(strcmp(opcode, "END") != 0 && 0){
 			//if this is not a comment line
 			if(!lineIsComment){
 				//search OPTAB for OPCODE
 				//if found then
-				if(opTabContains(opcode)){
+				if(OpTabContains(opcode)){
 					//if there is a symbol in the operand field
 					if(operand[0] > 60){
 						//search SYMTAB for operand
 						//if found then
-						if(symTabContains(operand)){
+						if(1){
 							//store symbol value as operand address
 								//TODO
 						}
@@ -95,46 +118,53 @@ void pass2(FILE * intermFile){
 
 int main(){
 
-	printf("Starting Main...\n");
+	// printf("Starting Main...\n");
 
-	char line[256];
-	char label[20];
-	char opcode[20];
-	char operand[20];
-	char lineAddr[20];
-	char opcodeHex[20];
-	char comment[256];
+	// char line[256];
+	// char label[20];
+	// char opcode[20];
+	// char operand[20];
+	// char lineAddr[20];
+	// char opcodeHex[20];
+	// char comment[256];
 	
-	printf("Creating Int...\n");
+	// printf("Creating Int...\n");
 
-	int lineIsComment = 0;
+	// int lineIsComment = 0;
 
-	printf("Done Creating Int...\n");
+	// printf("Done Creating Int...\n");
 
-	char  test[256] = "0x1030:0xA4:0:WORD;ZERO    WORD    0";
+	// char  test[256] = "0x1030:0xA4:0:WORD;ZERO    WORD    0";
  
- 	printf("Starting SplitString2...\n");
+ // 	printf("Starting SplitString2...\n");
 
-	splitString2(test, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
-
-
-
-	printf("Line: %s\n\n", test);
-
-	if(lineIsComment) printf("LineIsComment: True\n");
-	else printf("LineIsComment: False\n");
+	// splitString2(test, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
 
 
-	printf("lineAddr: |%s|\n", lineAddr);
-	printf("opcodeHex: |%s|\n", opcodeHex);
-	printf("label: |%s|\n", label);
-	printf("opcode: |%s|\n", opcode);
-	printf("operand: |%s|\n", operand);
-	printf("comment: |%s|\n", comment);
+
+	// printf("Line: %s\n\n", test);
+
+	// if(lineIsComment) printf("LineIsComment: True\n");
+	// else printf("LineIsComment: False\n");
+
+
+	// printf("lineAddr: |%s|\n", lineAddr);
+	// printf("opcodeHex: |%s|\n", opcodeHex);
+	// printf("label: |%s|\n", label);
+	// printf("opcode: |%s|\n", opcode);
+	// printf("operand: |%s|\n", operand);
+	// printf("comment: |%s|\n", comment);
 
 	// for(int i = 0; i < 10; i++){
 	// 	printf("lineAddr[%d]: %c\n", i, lineAddr[i]);
 	// }
+
+	FILE * file = fopen("./source.asm", "r");
+	pass1(file);
+	FILE * file2 = fopen("./interm.txt", "r");
+	pass2(file2);
+
+	
 
 	
 	return 0;
@@ -173,7 +203,7 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 
 
 	if(line[0] == ' ' || line[0] == '.'){
-		lineIsComment = 1;
+		*lineIsComment = 1;
 		return;
 	}
 
@@ -181,7 +211,7 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 		
 	
 		
-		// printf("On Char: %c at index %d\nWriting %c to %d at index %d\n\n", line[i], i, line[i], writingTo, j);
+		printf("On Char: %c at index %d\nWriting %c to %d at index %d\n\n", line[i], i, line[i], writingTo, j);
 		if(writingTo == 0){
 			if(line[i] == ':') lineAddr[j] = 0;
 			else lineAddr[j] = line[i];
@@ -210,6 +240,18 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 		}
 
 		i++;
-		
 	}
+}
+
+// Turns all lowercase characters in a char array to uppercase.
+char * toUpperCase(char * string){
+
+	for(int i = 0; string[i] != 0; i++){		
+		if(string[i] > 96 && string[i] < 123){
+			printf("Changing %c to %c\n", string[i], string[i] - 32);
+			string[i] = string[i] - 32;
+		}
+	}
+
+	return string;
 }

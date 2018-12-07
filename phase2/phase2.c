@@ -23,6 +23,9 @@ void outputErrorsToFile();
 char ** OPTAB;
 char ** ERRORMESSAGES;
 int * ERRORS; 
+char programName[6];
+char programLength[6];
+struct symTab SYMTAB;
 
 
 
@@ -59,6 +62,8 @@ int main(){
 
 
 	pass1(file);
+
+	printf("Program Name: %s", programName);
 	
 
 
@@ -131,7 +136,6 @@ void pass1(FILE * file){
 
 	
 	//Create Symbol Table
-	struct symTab SYMTAB;
 	initializeSymbolTable(&SYMTAB);
 	initializeErrorTables();
 
@@ -153,6 +157,7 @@ void pass1(FILE * file){
 			startingAddress = n;
 			//initialize LOCCTR to starting address
 			LOCCTR = startingAddress;
+			strcpy(programName, label);
 			//write line to intermediate file
 			
 			//read next input line
@@ -172,7 +177,7 @@ void pass1(FILE * file){
 	sprintf(opHexFormatted, "%s:", opHex);
 	fputs(opHexFormatted, intermFile);
 
-
+	
 	lineNum++;
 	fputs(operand, intermFile);
 	fputs(":", intermFile);
@@ -302,7 +307,7 @@ void pass1(FILE * file){
 	// fputs(operand, intermFile);
 	fputs(line, intermFile);
 	//save (LOCCTR - starting address) as program length
-
+	sprintf(programLength, "%x", LOCCTR);
 
 	for(int i = 0; i < 100; i++){
 		printf("%d\n", ERRORS[i]);
@@ -341,8 +346,8 @@ void initializeErrorTables(){
 		ERRORMESSAGES[i] = (char * )calloc(50, sizeof(char));
 	}
 
-	ERRORMESSAGES[0] = "INVALID OPCODE";
-	ERRORMESSAGES[1] = "INVALID SYMBOL LENGTH";
+	ERRORMESSAGES[0] = "ILLEGAL OPCODE";
+	ERRORMESSAGES[1] = "ILLEGAL SYMBOL";
 	ERRORMESSAGES[2] = "DUPLICATE SYMBOL";
 
 	//Table that will hold a line and the error that's on that line next to each other.

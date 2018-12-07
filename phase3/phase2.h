@@ -23,47 +23,15 @@ void outputErrorsToFile();
 char ** OPTAB;
 char ** ERRORMESSAGES;
 int * ERRORS; 
+char programName[6];
+char programLength[6];
 
 
 
 int LOCCTR = 0;
 
 
-// char * OPTAB[] = 
-
-// int main(){
-
-
-// 	// char label[20];
-// 	// char opcode[20];
-// 	// char operand[20]; 
-// 	// char comment[100]; 
-
-// 	// zeroOut(label, 20);
-// 	// zeroOut(opcode, 20);
-// 	// zeroOut(operand, 20);
-// 	// zeroOut(comment, 100);
-
-// 	// splitString("CLOOP   JSUB    RDREC		READ INPUT RECORD",label, opcode, operand, comment);
-
-
-// 	// printf("Label:%s|\nOpcode:%s|\nOperand:%s|\nComment:%s|\n", label, opcode, operand, comment);
-
-
-// 	FILE * file;
-
-// 	file = fopen("./source.asm.txt", "r");
-
-
-	
-
-
-// 	pass1(file);
-	
-
-
-// 	return 0;
-// }
+// char * OPTAB[] =
 
 void pass1(FILE * file){
 
@@ -153,6 +121,7 @@ void pass1(FILE * file){
 			startingAddress = n;
 			//initialize LOCCTR to starting address
 			LOCCTR = startingAddress;
+			strcpy(programName, label);
 			//write line to intermediate file
 			
 			//read next input line
@@ -302,7 +271,7 @@ void pass1(FILE * file){
 	// fputs(operand, intermFile);
 	fputs(line, intermFile);
 	//save (LOCCTR - starting address) as program length
-
+	sprintf(programLength, "%x", LOCCTR);
 
 	for(int i = 0; i < 100; i++){
 		printf("%d\n", ERRORS[i]);
@@ -341,8 +310,8 @@ void initializeErrorTables(){
 		ERRORMESSAGES[i] = (char * )calloc(50, sizeof(char));
 	}
 
-	ERRORMESSAGES[0] = "INVALID OPCODE";
-	ERRORMESSAGES[1] = "INVALID SYMBOL LENGTH";
+	ERRORMESSAGES[0] = "ILLEGAL OPCODE";
+	ERRORMESSAGES[1] = "ILLEGAL SYMBOL";
 	ERRORMESSAGES[2] = "DUPLICATE SYMBOL";
 
 	//Table that will hold a line and the error that's on that line next to each other.
