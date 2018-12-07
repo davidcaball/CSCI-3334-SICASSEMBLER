@@ -4,6 +4,8 @@
 
 void splitString2(char * line, char * lineAddr, char * opcode, char * label, char * opcodeHex, char * operand, char * comment, int * lineIsComment);
 char *  toUpperCase(char * string);
+void appendString(char * string1, char * string2);
+char * lengthenToSixBytes(char * buffer, char * string);
 
 
 void pass2(FILE * intermFile){
@@ -21,8 +23,13 @@ void pass2(FILE * intermFile){
 	char comment[256];
 	char lineAddr[20];
 	char opcodeHex[20];
+	char sixCharAdress[6];
 
-	char prefix[]
+	char prefix[9];
+	char suffix[60];
+
+	zeroOut(prefix, 9);
+	zeroOut(suffix, 60);
 
 	//Flag for if line is a comment
 	int lineIsComment;
@@ -48,25 +55,22 @@ void pass2(FILE * intermFile){
 		//write header record to object program
 			fputs("H", objFile);
 			fputs(toUpperCase(programName), objFile);
-			printf("Writing: %s\n", programName);
 			for(int i = 0; i < 7 - strlen(programName); i++){
-				printf("Writing a Space\n");
 				fputs(" ", objFile);
 			}
 			for(int i = 0; i < 6 - strlen(operand); i++){
-				printf("Writing a 0\n");
 				fputs("0", objFile);
 			}
 			fputs(toUpperCase(operand), objFile);
-			printf("Writing: %s\n", operand);
 			for(int i = 0; i < 6 - strlen(programLength); i++){
-				printf("Writing a 0\n");
 				fputs("0", objFile);
 			}
 			fputs(toUpperCase(programLength), objFile);
-			printf("Writing: %s\n", programLength);
+			fputs("\n", objFile);
+
 		//initialize first text record
-			//TODO
+		appendString(prefix, "T");
+		appendString(prefix, lineAddr + 2);
 
 		//while OPCODE != END
 		while(strcmp(opcode, "END") != 0 && 0){
@@ -159,14 +163,19 @@ int main(){
 	// 	printf("lineAddr[%d]: %c\n", i, lineAddr[i]);
 	// }
 
+
+
 	FILE * file = fopen("./source.asm", "r");
-	pass1(file);
+	// pass1(file);
 	FILE * file2 = fopen("./interm.txt", "r");
-	pass2(file2);
+	// pass2(file2);
+	char buffer[10];
+	char test[10] =  "2CCCC";
 
-	
 
-	
+
+	printf("\n%s\n", lengthenToSixBytes(buffer, test));
+
 	return 0;
 
 
@@ -254,4 +263,39 @@ char * toUpperCase(char * string){
 	}
 
 	return string;
+}
+	
+
+// Will append string2 to string1, assumes that string1 has memory allocated after its last non-null character
+void appendString(char * string1, char * string2){
+	int i;
+	for(i = 0; i < strlen(string1); i++);
+
+	for(int j = 0; string2[j] != 0; j++){
+		string1[i] = string2[j];
+		i++;
+	}
+
+	// printf("string1: %s\n", string1);
+}
+
+
+
+//Lengthens an address to 6 characters by adding zeroes to the beginning
+char * lengthenToSixBytes(char * buffer, char * string){
+	 
+	zeroOut(buffer, 10);
+
+	if(strlen(string) >= 6) return string;
+	else{
+		int numZeroes = 6 - strlen(string);
+
+		
+		for(int i = 0; i < numZeroes; i++){
+			buffer[i] = '0';
+		}
+		appendString(buffer, string);
+		
+		return buffer;
+	}
 }
