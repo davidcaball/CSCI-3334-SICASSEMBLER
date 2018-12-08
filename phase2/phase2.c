@@ -349,6 +349,7 @@ void initializeErrorTables(){
 	ERRORMESSAGES[0] = "ILLEGAL OPCODE";
 	ERRORMESSAGES[1] = "ILLEGAL SYMBOL";
 	ERRORMESSAGES[2] = "DUPLICATE SYMBOL";
+	ERRORMESSAGES[3] = "UNDEFINED SYMBOL";
 
 	//Table that will hold a line and the error that's on that line next to each other.
 	ERRORS = (int *)calloc(100, sizeof(int));

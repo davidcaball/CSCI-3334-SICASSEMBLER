@@ -6,6 +6,7 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 char *  toUpperCase(char * string);
 void appendString(char * string1, char * string2);
 char * lengthenToSixBytes(char * buffer, char * string);
+char * lengthenToFourBytes(char * buffer, char * string);
 
 
 void pass2(FILE * intermFile){
@@ -21,15 +22,21 @@ void pass2(FILE * intermFile){
 	char operand[20];
 	char operandAddress[20];
 	char comment[256];
-	char lineAddr[20];
-	char opcodeHex[20];
-	char sixCharAdress[6];
+	char lineAddr[20];   //the address of the current line
+	char opcodeHex[20];  //the hexcode for an opcode
+	char buffer[10]; //used as a buffer for string functions
+	char symbolAddress[10]; //Holds the address of a symbol temporatily
+	char currentInstruction[10];
+	char textRecordLengthHex[5];
 
-	char prefix[9];
-	char suffix[60];
+	char prefix[9]; //Holds the beginnning of a text record
+	char suffix[80]; //Holds the object code of a text record.
 
 	zeroOut(prefix, 9);
-	zeroOut(suffix, 60);
+	zeroOut(suffix, 80);
+	zeroOut(symbolAddress, 10);
+	zeroOut(currentInstruction, 10);
+	zeroOut(textRecordLengthHex, 5);
 
 	//Flag for if line is a comment
 	int lineIsComment;
@@ -38,7 +45,7 @@ void pass2(FILE * intermFile){
 	fgets(line, sizeof line, intermFile);
 	splitString2(line, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
 
-
+	printf("LINE: %s\n", line);
 	//begin
 		//read first input line from intermediate file
 		
@@ -68,56 +75,113 @@ void pass2(FILE * intermFile){
 			fputs(toUpperCase(programLength), objFile);
 			fputs("\n", objFile);
 
+		
+
 		//initialize first text record
 		appendString(prefix, "T");
-		appendString(prefix, lineAddr + 2);
+		appendString(prefix, lengthenToSixBytes(buffer, lineAddr + 2));
+
+		printf("%s", prefix);
+
+		fgets(line, sizeof line, intermFile);
+		splitString2(line, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
+
 
 		//while OPCODE != END
-		while(strcmp(opcode, "END") != 0 && 0){
+		printf("= END: %d", strcmp(opcode, "END"));
+		while(strcmp(opcode, "END") != 0){
+		// for(int i = 0; i < 11; i++){
+			printf("String length + 6: %d\n", strlen(suffix) + 6);
 			//if this is not a comment line
+			printf("LINE IS COMMENT: %d\n", lineIsComment);
 			if(!lineIsComment){
 				//search OPTAB for OPCODE
 				//if found then
+				printf("OPCODE: %s\n", opcode);
 				if(OpTabContains(opcode)){
 					//if there is a symbol in the operand field
 					if(operand[0] > 60){
 						//search SYMTAB for operand
 						//if found then
-						if(1){
+						if(symTabContains(&SYMTAB, operand)){
 							//store symbol value as operand address
-								//TODO
+							getSymbolAddress(&SYMTAB, operand, symbolAddress);
 						}
 						//else
 						else{
+							printf("COULDNT FIND %s\n", operand);
 							//store 0 as operand address
+							strcpy(symbolAddress, "0000");
 							//set error flag, undefined tymbol
 						}//end if {symbol}
 					}
 					//else
 					else{
 						//store 0 as the operand address
+						strcpy(symbolAddress, "0000");
 					}
 					//assemble the object code insreuction
+					appendString(currentInstruction, opcodeHex + 2);
+					appendString(currentInstruction, toUpperCase(symbolAddress));
 
-
+					
 
 				}//end {if opcode found}
 				//else if OPCODE = 'BYTE' or 'WORD'
-				else if(strcmp(opcode, "BYTE") ==0 || strcmp(opcode, "WORD") == 0){
+				else if(strcmp(opcode, "BYTE") == 0 || strcmp(opcode, "WORD") == 0){
 					//convert constant to object code
+					appendString(currentInstruction, opcodeHex + 2);
+					lengthenToFourBytes(buffer, operand);
+					appendString(currentInstruction, toUpperCase(buffer));
 				}
 				//if object code will not fit into the current text record
+				if(strlen(suffix) + 6 > 60){
+					printf("TOOLONG**********************************\n");
+					printf("String length + 6: %d\n", strlen(suffix) + 6);
 					//write text record to object program
+					sprintf(textRecordLengthHex, "%x", strlen(suffix) / 2);
+					appendString(prefix, toUpperCase(textRecordLengthHex));
+					fputs(prefix, objFile);
+					fputs(suffix, objFile);
+					fputs("\n", objFile);
+
 					//initialize new text record
-				//add object code to text record
+					zeroOut(prefix, 9);
+					zeroOut(suffix, 80);
+					zeroOut(symbolAddress, 10);
+					zeroOut(textRecordLengthHex, 5);
+
+					appendString(prefix, "T");
+					appendString(prefix, lengthenToSixBytes(buffer, toUpperCase(lineAddr + 2)));
+
+				}
+
+				printf("CURRENT INSTRUCTION: %s\n", currentInstruction);
+				appendString(suffix, currentInstruction);
+				zeroOut(currentInstruction, 10);
+				printf("PREFIX: %s\n", prefix);
+				printf("SUFFIX: %s\n", suffix);
+
 			}//end if {not comment}
 			//write listing line
 			//read next input line
+
+
+			fgets(line, sizeof line, intermFile);
+			splitString2(line, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
+
+
+
 		}//end {while not END}
+
+
 		//write last text record to object program
 		//write end record to object program
 		//write last listing line
 	//end pass 2
+
+		
+
 }
 
 int main(){
@@ -166,15 +230,19 @@ int main(){
 
 
 	FILE * file = fopen("./source.asm", "r");
-	// pass1(file);
+	pass1(file);
 	FILE * file2 = fopen("./interm.txt", "r");
-	// pass2(file2);
-	char buffer[10];
-	char test[10] =  "2CCCC";
+	pass2(file2);
 
 
+	// char symbol[10] = "THREEdfdfd";
+	// char address[10];
 
-	printf("\n%s\n", lengthenToSixBytes(buffer, test));
+	// zeroOut(address, 10);
+
+	// getSymbolAddress(&SYMTAB, symbol, address);
+
+	// printf("ADDRESS: %s|\n", address);
 
 	return 0;
 
@@ -220,7 +288,7 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 		
 	
 		
-		printf("On Char: %c at index %d\nWriting %c to %d at index %d\n\n", line[i], i, line[i], writingTo, j);
+		// printf("On Char: %c at index %d\nWriting %c to %d at index %d\n\n", line[i], i, line[i], writingTo, j);
 		if(writingTo == 0){
 			if(line[i] == ':') lineAddr[j] = 0;
 			else lineAddr[j] = line[i];
@@ -289,6 +357,25 @@ char * lengthenToSixBytes(char * buffer, char * string){
 	if(strlen(string) >= 6) return string;
 	else{
 		int numZeroes = 6 - strlen(string);
+
+		
+		for(int i = 0; i < numZeroes; i++){
+			buffer[i] = '0';
+		}
+		appendString(buffer, string);
+		
+		return buffer;
+	}
+}
+
+//Lengthens an address to 4 characters by adding zeroes to the beginning
+char * lengthenToFourBytes(char * buffer, char * string){
+	 
+	zeroOut(buffer, 10);
+
+	if(strlen(string) >= 4) return string;
+	else{
+		int numZeroes = 4 - strlen(string);
 
 		
 		for(int i = 0; i < numZeroes; i++){

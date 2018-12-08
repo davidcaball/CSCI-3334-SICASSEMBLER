@@ -25,13 +25,14 @@ char ** ERRORMESSAGES;
 int * ERRORS; 
 char programName[6];
 char programLength[6];
+struct symTab SYMTAB;
 
 
 
 int LOCCTR = 0;
 
 
-// char * OPTAB[] =
+// char * OPTAB[] = 
 
 void pass1(FILE * file){
 
@@ -99,7 +100,6 @@ void pass1(FILE * file){
 
 	
 	//Create Symbol Table
-	struct symTab SYMTAB;
 	initializeSymbolTable(&SYMTAB);
 	initializeErrorTables();
 

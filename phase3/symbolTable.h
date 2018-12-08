@@ -34,6 +34,18 @@ void addToSymTab(struct symTab * s, char * symbol, int LOCCTR){
 
 	debugPrint("Done Adding to Symbol Table...\n");
 }
+
+
+//Adds a symbol to the symbol table
+char * getSymbolAddress(struct symTab * s, char * symbol, char * address){
+
+	for(int i = 0; i < s->length; i+= 2){
+		if(strcmp(s->array[i], symbol) == 0){
+			strcpy(address, s->array[i + 1]);
+		}
+	}
+
+}
 	
 
 //Returns 1 if symbol table contains the symbol
