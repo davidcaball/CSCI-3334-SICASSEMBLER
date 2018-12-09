@@ -72,7 +72,7 @@ void pass2(FILE * intermFile){
 	fgets(line, sizeof line, intermFile);
 	splitString2(line, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
 
-	printf("LINE: %s\n", line);
+	// printf("LINE: %s\n", line);
 	//begin
 		//read first input line from intermediate file
 		
@@ -121,8 +121,9 @@ void pass2(FILE * intermFile){
 		appendString(prefix, lengthenToSixBytes(buffer, lineAddr + 2));
 
 
-		printf("%s", prefix);
+		// printf("%s", prefix);
 
+		//Get the next line
 		lineNumber++;
 		fgets(line, sizeof line, intermFile);;
 		splitString2(line, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
@@ -130,21 +131,21 @@ void pass2(FILE * intermFile){
 
 
 		//while OPCODE != END
-		printf("= END: %d", strcmp(opcode, "END"));
-
 		while(strcmp(opcode, "END") != 0){
+
+			
 		// for(int i = 0; i < 30; i++){
-			printf("OPCODE: %s\n", opcode);
-			printf("String length + 6: %d\n", strlen(suffix) + 6);
-			//if this is not a comment line
-			printf("LINE IS COMMENT: %d\n", lineIsComment);
+			// printf("OPCODE: %s\n", opcode);
+			// printf("String length + 6: %d\n", strlen(suffix) + 6);
+			// //if this is not a comment line
+			// printf("LINE IS COMMENT: %d\n", lineIsComment);
 
 
 
 			if(!lineIsComment){
 				//search OPTAB for OPCODE
 				//if found then
-				printf("OPCODE: %s\n", opcode);
+				// printf("OPCODE: %s\n", opcode);
 
 
 				if(OpTabContains(opcode)){
@@ -177,13 +178,8 @@ void pass2(FILE * intermFile){
 						}//end if {symbol}
 					}
 					else if(operand[0] > 47 && operand[0] < 58){
-						printf("OPERAND: %s\n", operand);
-						convertStringToHex(operand);
-						printf("OPERAND: %s\n", operand);
-						
-						printf("buffer: %s\n", buffer);
-					
-						printf("SYMBOL ADDRESS: %s\n", lengthenToFourBytes(buffer, operand));
+			
+						convertStringToHex(operand);		
 					}
 			
 					else{
@@ -192,7 +188,7 @@ void pass2(FILE * intermFile){
 					}
 					//assemble the object code insreuction
 
-					printf("APPENDING TO INSTRUCTION: ADDING %s to %s\n", opcodeHex + 2, currentInstruction);
+					// printf("APPENDING TO INSTRUCTION: ADDING %s to %s\n", opcodeHex + 2, currentInstruction);
 					appendString(currentInstruction, opcodeHex + 2);
 					appendString(currentInstruction, toUpperCase(symbolAddress));
 
@@ -210,7 +206,7 @@ void pass2(FILE * intermFile){
 					zeroOut(currentInstruction, 10);
 
 					if(containsApostrophe(operand) && operand[0] == 'C'){
-						printf("CONTAINS APOSTROPHE!\n\n");
+						// printf("CONTAINS APOSTROPHE!\n\n");
 						int i = 2;
 
 						while(operand[i] != 0){
@@ -218,13 +214,11 @@ void pass2(FILE * intermFile){
 							if(operand[i] == '\'') break;
 							if(strlen(suffix) + 6 > 60) break;
 
-							printf("OPERAND: %s\n", operand);
-							printf("OPERAND[i]: %c\n", operand[i]);
-
+							
 							convertCharToHex(operand + i, buffer);
 
 							appendString(currentInstruction, toUpperCase(buffer));
-							printf("CUR INT: %s\n", currentInstruction);
+							// printf("CUR INT: %s\n", currentInstruction);
 							
 							i++;
 						}
@@ -242,6 +236,7 @@ void pass2(FILE * intermFile){
 				}
 				else if(strcmp(opcode, "WORD") == 0){
 
+					//Just format the output into 3 bytes
 					zeroOut(currentInstruction, 10);
 					lengthenToSixBytes(buffer, operand);
 					appendString(currentInstruction, toUpperCase(buffer));
@@ -250,12 +245,14 @@ void pass2(FILE * intermFile){
 				else if(strcmp(opcode, "RESW") == 0 || strcmp(opcode, "RESB") == 0){
 
 					while(strcmp(opcode, "RESW") == 0 || strcmp(opcode, "RESB") == 0 || lineIsComment){
-						printf("GETTING NEXT LINE");
+						
+
+						
 						writeToListingFile(listingFile, lineNumber, comment, currentInstruction, lineAddr, lineIsComment);
 						writeErrors(listingFile, lineNumber);
 						fgets(line, sizeof line, intermFile);
 						lineNumber++;
-						printf("LINE: %s\n",line);	
+					
 						splitString2(line, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
 
 					}
@@ -275,9 +272,6 @@ void pass2(FILE * intermFile){
 					zeroOut(symbolAddress, 10);
 					zeroOut(textRecordLengthHex, 5);
 
-					
-
-
 					appendString(prefix, "T");
 					appendString(prefix, lengthenToSixBytes(buffer, toUpperCase(lineAddr + 2)));
 
@@ -290,13 +284,13 @@ void pass2(FILE * intermFile){
 				}
 				//if object code will not fit into the current text record
 				else if(strlen(suffix) + 6 > 60){
-					printf("TOOLONG**********************************\n");
-					printf("String length + 6: %d\n", strlen(suffix) + 6);
+				
 					//write text record to object program
 					sprintf(textRecordLengthHex, "%x", strlen(suffix) / 2);
 					
 					appendString(prefix, lengthenToTwoBytes(toUpperCase(textRecordLengthHex), buffer));
 					
+					//Write to object file
 					fputs(prefix, objFile);
 					fputs(suffix, objFile);
 					fputs("\n", objFile);
@@ -312,12 +306,13 @@ void pass2(FILE * intermFile){
 
 				}
 
-				printf("CURRENT INSTRUCTION: %s\n", currentInstruction);
+				// printf("CURRENT INSTRUCTION: %s\n", currentInstruction);
 				appendString(suffix, currentInstruction);
 				
-				printf("PREFIX: %s\n", prefix);
-				printf("SUFFIX: %s\n", suffix);
+				// printf("PREFIX: %s\n", prefix);
+				// printf("SUFFIX: %s\n", suffix);
 
+				//Out put line and errors to listing file
 				writeToListingFile(listingFile, lineNumber, comment, currentInstruction, lineAddr, lineIsComment);
 				writeErrors(listingFile, lineNumber);
 				zeroOut(currentInstruction, 10);
@@ -331,6 +326,8 @@ void pass2(FILE * intermFile){
 
 			}//end if {not comment}
 			else{
+
+				//Output line and errors to listing file
 				writeToListingFile(listingFile, lineNumber, comment, currentInstruction, lineAddr, lineIsComment);
 				writeErrors(listingFile, lineNumber);
 				fgets(line, sizeof line, intermFile);
@@ -346,12 +343,12 @@ void pass2(FILE * intermFile){
 		}//end {while not END}
 
 		sprintf(textRecordLengthHex, "%x", strlen(suffix) / 2);
-		printf("textRecordLengthHex: %s\n", textRecordLengthHex);	
+
 		appendString(prefix, lengthenToTwoBytes(toUpperCase(textRecordLengthHex), buffer));
 		
 		//write last text record to object program
-		printf("LAST PREFIX: %s\n", prefix);
-		printf("LAST SUFFIX: %s\n", suffix);
+		// printf("LAST PREFIX: %s\n", prefix);
+		// printf("LAST SUFFIX: %s\n", suffix);
 
 		fputs(prefix, objFile);
 		fputs(suffix, objFile);
@@ -365,81 +362,13 @@ void pass2(FILE * intermFile){
 		lengthenToSixBytes(buffer, startAddress);
 		fputs(buffer, objFile);
 		//write last listing line
-	//end pass 2
+		//end pass 2
 
 		
 		fclose(objFile);
-
-		// free(ERRORS);
-
-		// for(int i = 0; i < 10;i++){
-	 //        free(ERRORMESSAGES[i]);
-	 //    }
-
-	 //    free(ERRORMESSAGES);
 }
 
 // int main(){
-
-// 	// printf("Starting Main...\n");
-
-// 	// char line[256];
-// 	// char label[20];
-// 	// char opcode[20];
-// 	// char operand[20];
-// 	// char lineAddr[20];
-// 	// char opcodeHex[20];
-// 	// char comment[256];
-	
-// 	// printf("Creating Int...\n");
-
-// 	// int lineIsComment = 0;
-
-// 	// printf("Done Creating Int...\n");
-
-// 	// char  test[256] = "0x1030:0xA4:0:WORD;ZERO    WORD    0";
- 
-//  // 	printf("Starting SplitString2...\n");
-
-// 	// splitString2(test, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
-
-
-
-// 	// printf("Line: %s\n\n", test);
-
-// 	// if(lineIsComment) printf("LineIsComment: True\n");
-// 	// else printf("LineIsComment: False\n");
-
-
-// 	// printf("lineAddr: |%s|\n", lineAddr);
-// 	// printf("opcodeHex: |%s|\n", opcodeHex);
-// 	// printf("label: |%s|\n", label);
-// 	// printf("opcode: |%s|\n", opcode);
-// 	// printf("operand: |%s|\n", operand);
-// 	// printf("comment: |%s|\n", comment);
-
-// 	// for(int i = 0; i < 10; i++){
-// 	// 	printf("lineAddr[%d]: %c\n", i, lineAddr[i]);
-// 	// }
-
-
-
-// 	FILE * file = fopen("./source.asm", "r");
-// 	pass1(file);
-// 	FILE * file2 = fopen("./interm.txt", "r");
-// 	pass2(file2);
-
-
-// 	// char symbol[10] = "THREEdfdfd";
-// 	// char address[10];
-
-// 	// zeroOut(address, 10);
-
-// 	// getSymbolAddress(&SYMTAB, symbol, address);
-
-// 	// printf("ADDRESS: %s|\n", address);
-
-// 	return 0;
 
 
 // }
@@ -456,7 +385,7 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 	*lineIsComment = 0;
 
 
-	printf("Starting SplitString2...\n");
+	// printf("Starting SplitString2...\n");
 
 	int noLabel = 0;
 	int writingTo = 0; //Represents the current char array being written to. label = 0, opcode = 1, operand = 2, comment = 3
@@ -475,7 +404,7 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 
 
 	if(line[0] == ' ' || line[0] == '.'){
-		printf("THIS LINE IS COMMENT");
+		// printf("THIS LINE IS COMMENT");
 		*lineIsComment = 1;
 		strcpy(comment, line);
 		return;
@@ -526,7 +455,7 @@ char * toUpperCase(char * string){
 	int i = 0;
 	while(string[i] != 0){		
 		if(string[i] > 96 && string[i] < 123){
-			printf("Changing %c to %c\n", string[i], string[i] - 32);
+			// printf("Changing %c to %c\n", string[i], string[i] - 32);
 			string[i] = string[i] - 32;
 		}
 		i++;
@@ -687,17 +616,22 @@ void addBit(char * string){
 	number += 32768;
 
 	sprintf(string, "%x", number);
-	printf("%s\n", string);
+	// printf("%s\n", string);
 }
 
+
+//Converts a character string that is in decimal to it's hex equivalent
 void convertStringToHex(char * string){
-	printf("StrinG: %s\n", string);
+
 	int number = (int)strtol(string, NULL, 10);
-	printf("NUMBER: %d\n", number);
 	sprintf(string, "%x", number);
-	printf("String: %s\n", string);
+
 }
 
+
+//Will write to listing file in the format:
+
+// "Line [#]: [Instructions address] [Instruction] [source line]"
 void * writeToListingFile(FILE * file, int lineNumber,char * line, char * currentInstruction, char * lineAddr, int lineIsComment){
 	
 	zeroOut(currentLine, 300);
@@ -714,6 +648,8 @@ void * writeToListingFile(FILE * file, int lineNumber,char * line, char * curren
 	}
 }
 
+
+//Will take a file and a line number and will write any errors found on that line to the file
 void * writeErrors(FILE * file, int lineNumber){
 	int i = 0;
 	while(i < MAXERRORS && ERRORS[i] != -1){

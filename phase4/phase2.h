@@ -129,11 +129,11 @@ void pass1(FILE * file){
 
 	// printf("%d", getc(file));
 	//read first output line
-	printf("HERE1\n");
+	
 
 	fgets(line, sizeof line, file);
 
-	printf("HERE2\n");
+
 
 	splitString(line, label, opcode, operand, comment);
 
@@ -145,7 +145,7 @@ void pass1(FILE * file){
 	// Initialize OPTAB
 	initializeOpTab();
 
-	printf("HERE1\n");
+
 	
 	// printf("%d", strcmp(opcode, "START") == 0);
 
@@ -192,7 +192,6 @@ void pass1(FILE * file){
 	fgets(line, sizeof line, file);
 	splitString(line, label, opcode, operand, comment);
 
-	printf("%s\n", line);
 
 	//while OPCODE != END do
 	while(strcmp(opcode,"END") != 0){
@@ -200,10 +199,7 @@ void pass1(FILE * file){
 		if(hasIllegalCharacters(label) && label[0] != '.'){
 				insertError(lineNum, 1);
 		}
-
-		if(!DEBUGGING) printf("Line: %s\n", line);
-		if(!DEBUGGING) printf("Label:%s|\nOpcode:%s|\nOperand:%s|\nComment:%s|\n", label, opcode, operand, comment);
-		
+	
 		//if this is not a comment line then
 		if(strcmp(label, ".") != 0){
 			//begin
@@ -315,11 +311,11 @@ void pass1(FILE * file){
 	//save (LOCCTR - starting address) as program length
 	sprintf(programLength, "%x", LOCCTR);
 
-	int i = 0;
-	while(i < 100){
-		printf("%d\n", ERRORS[i]);
-		i++;
-	}
+	// int i = 0;
+	// while(i < 100){
+	// 	printf("%d\n", ERRORS[i]);
+	// 	i++;
+	// }
 
 	outputErrorsToFile(intermFile);
 
@@ -381,7 +377,7 @@ void initializeErrorTables(){
 //Inserts an error to the error table
 void insertError(int line, int errorCode){
 
-	printf("INSERTING ERROR %d at line %d", errorCode, line);
+	// printf("INSERTING ERROR %d at line %d", errorCode, line);
 
 	int i = 0;
 	while(i < 100){
@@ -397,7 +393,7 @@ void insertError(int line, int errorCode){
 
 //Writes errors to intermediate file
 void outputErrorsToFile(FILE * file){
-	fprintf(file, "\n\nERRORS\n");
+	// fprintf(file, "\n\nERRORS\n");
 
 	int i = 0;
 	while(ERRORS[i] != -1 && i < 100){
@@ -411,12 +407,12 @@ void outputErrorsToFile(FILE * file){
 // Returns 1 if OPTAB contains an op
 // Returns 0 if not
 int OpTabContains(char * op){
-	if(DEBUGGING) printf("Searching OPTAB For OP: %s...\n", op);
+	// if(DEBUGGING) printf("Searching OPTAB For OP: %s...\n", op);
 
 	int i = 0;
 	while(i < 61){
 		if(strcmp(op, OPTAB[i]) == 0){
-			if(DEBUGGING) printf(" Found On Element: %d \n", i);
+			// if(DEBUGGING) printf(" Found On Element: %d \n", i);
 			return 1;
 		}
 		i += 2;			
@@ -520,11 +516,11 @@ void initializeOpTab(){
 	OPTAB[62][0] = 0;
 
 
-	i = 0;
-	while(i < 62){
-		printf("%2d: %9s %5s \n", i / 2 + 1, OPTAB[i], OPTAB[i + 1]);
-		i+= 2;
-	}
+	// i = 0;
+	// while(i < 62){
+	// 	printf("%2d: %9s %5s \n", i / 2 + 1, OPTAB[i], OPTAB[i + 1]);
+	// 	i+= 2;
+	// }
 
 }
 
@@ -671,12 +667,12 @@ void zeroOut(char * string, int length){
 int hasIllegalCharacters(char * string){
 
 	if(string[0] > 48 && string[0] < 58) return 1;
-	printf("%d", strlen(string));
+	// printf("%d", strlen(string));
 
 	int i = 0;
 	while(i < strlen(string)){
 		if(string[i] < 48 || (string[i] > 57 && string[i] < 65) || (string[i] > 90 && string[i] < 97)){
-			printf("%c is an illegal character at index %d\n", string[i], i);
+			// printf("%c is an illegal character at index %d\n", string[i], i);
 			return 1;
 		}
 		i++;

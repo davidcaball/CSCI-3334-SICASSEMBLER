@@ -15,11 +15,11 @@ void splitString0(char * input, char args[3][30]);
 void getCommand(char * string, char * command);
 int isEqual(char * string1, char * string2);
 
-
+int LOADEDADDRESS = -1;
 
 int main()
 {
-        char input[20]; // char array for user input
+        char input[200]; // char array for user input
         char args[3][30];
 
         int running = 1; //running flag
@@ -28,6 +28,10 @@ int main()
         printf("Hello, welcome to the command line!\n");
 
         while(running){
+
+        		zeroOut(args, 90);
+
+        		printf("Enter A command: \n");
                 //gets an input of 20 characters from stdin
                 fgets(input, 200, stdin);
 
@@ -35,8 +39,7 @@ int main()
                 // the command will be stored in args[0]
                 splitString0(input, args);
 
-                printf("args[0]: |%s|\n", args[0]);
-                printf("args[1]: |%s|\n", args[1]);
+            
 
 
                 // compare the command to known commands
@@ -59,6 +62,9 @@ int main()
                 }
                 else if(isEqual(args[0], "load") == 0){
                         commandLoad(args[1]);
+                }
+                else if(isEqual(args[0], "dump") == 0){
+                        commandDump(args[1], args[2]);
                 }
 
                 // Fallback
@@ -98,6 +104,17 @@ void commandExit(){
 
 
 void commandExecute(){
+	if(LOADEDADDRESS == -1)
+	{
+		printf("No Program has been loaded..\n");
+		return;
+	}
+	else
+	{	
+		printf("EXECUTING!\n");
+		ADDRESS Add = (ADDRESS)LOADEDADDRESS;
+		SICRun(&Add, 0);	
+	}
 	printf("Sorry, this command is not available yet");	
 }
 
@@ -110,8 +127,7 @@ void commandDirectory(){
 void commandLoad(char file[]){
 	
 	char line[100];
-	zeroOut(line,100)
-	;
+	zeroOut(line,100);
 	FILE * objFile = fopen(file, "r");	
 
 	if (objFile == NULL)
@@ -137,6 +153,48 @@ void commandLoad(char file[]){
 		return;
 	}
 
+	int length;
+	BYTE programName[7] = "";
+	BYTE startingAddress[10];
+	
+
+	//Parse string and store the data
+	sscanf(line, "%*c %6c %6c %6x", programName, startingAddress, &length);
+
+
+	int lengthofTextRecord;
+	int recordStart;
+
+	while(1){
+
+		fgets(line, 100, objFile);
+
+		if(line[0] == 'T'){
+			sscanf(line, "%*c %6x %2x", &recordStart, &lengthofTextRecord);
+	
+
+			int i = 0;
+			while(i < lengthofTextRecord){
+				BYTE value = 0;
+
+				sscanf(line + 9 + 2 * i, "%2x", &value);
+			
+				PutMem(recordStart + i, &value, 0);
+			
+				i++;
+			}
+		}
+		else if(line[0] == 'E'){
+		
+			sscanf(line, "%*c%x", &LOADEDADDRESS);
+			fclose(objFile);
+			return;
+		}
+		else{
+			printf("Sorry, there was an error in your object file..\n");
+		}
+	}
+
 
 
 
@@ -147,12 +205,12 @@ void commandDebug(){
 	printf("Sorry, this command is not available yet\n");	
 }
 
-void commandDump(){
+void commandDump(char * start, char * end){
 	printf("Sorry, this command is not available yet\n");	
 }
 
 void commandAssemble(char file[]){
-	printf("FILE: %s\n", file);
+	
 	FILE * sourceFile = fopen(file, "r");
 
 	if (sourceFile == NULL)
@@ -212,7 +270,7 @@ void splitString0(char * input, char args[3][30]){
 			if(j > 2) break; 			// Break if over 3 arguments
 			continue;
 		}
-		printf("Writing %c to args[%d][%d]\n", input[i], j, k);
+
 		args[j][k] = input[i];			// Write the value to the argument
 		k++;							// Increment index
 		i++;							//Increment index in the input

@@ -1,6 +1,6 @@
 
 //Initial size of array for symbol table
-int INITSIZE = 40;
+int INITSIZE = 1000;
 int DEBUGGING = 0;
 struct symTab{	
 	int length;
@@ -132,13 +132,13 @@ void writeSymbolTableToFile(struct symTab * s, FILE * file){
 //DEBUGCODE
 
 void printSymbolTable(struct symTab * s){
-	debugPrint("Printing Symbol Table..\n");
+	printf("Symbol Table\n\n");
 
 	printf("%12s %11s\n", "SYMBOL", "ADDRESS");
 	printf("---------------------------\n");
 
 	int i = 0;
-	while( i < s->length){
+	while( i < s->length && s->array[i][0] != 0){
 		printf("%2d: %9s %5s \n", i / 2 + 1, s->array[i], s->array[i + 1]);
 		i+= 2;
 	}
