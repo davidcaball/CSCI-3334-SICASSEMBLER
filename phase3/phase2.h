@@ -19,6 +19,7 @@ void getOpCodeAddress(char * opCode, char * address);
 void initializeErrorTables();
 void insertError();
 void outputErrorsToFile();
+int hasIllegalCharacters(char * string);
 
 char ** OPTAB;
 char ** ERRORMESSAGES;
@@ -33,6 +34,42 @@ int LOCCTR = 0;
 
 
 // char * OPTAB[] = 
+
+// int main(){
+
+
+// 	// char label[20];
+// 	// char opcode[20];
+// 	// char operand[20]; 
+// 	// char comment[100]; 
+
+// 	// zeroOut(label, 20);
+// 	// zeroOut(opcode, 20);
+// 	// zeroOut(operand, 20);
+// 	// zeroOut(comment, 100);
+
+// 	// splitString("CLOOP   JSUB    RDREC		READ INPUT RECORD",label, opcode, operand, comment);
+
+
+// 	// printf("Label:%s|\nOpcode:%s|\nOperand:%s|\nComment:%s|\n", label, opcode, operand, comment);
+
+
+// 	FILE * file;
+
+// 	file = fopen("./source.asm.txt", "r");
+
+
+	
+
+
+// 	pass1(file);
+
+// 	printf("Program Name: %s", programName);
+	
+
+
+// 	return 0;
+// }
 
 void pass1(FILE * file){
 
@@ -123,6 +160,9 @@ void pass1(FILE * file){
 			LOCCTR = startingAddress;
 			strcpy(programName, label);
 			//write line to intermediate file
+			if(hasIllegalCharacters(operand)){
+				insertError(1, 4);
+			}
 			
 			//read next input line
 			
@@ -157,7 +197,9 @@ void pass1(FILE * file){
 	//while OPCODE != END do
 	while(strcmp(opcode,"END") != 0){
 
-
+		if(hasIllegalCharacters(label)){
+				insertError(1, 1);
+		}
 
 		if(!DEBUGGING) printf("Line: %s\n", line);
 		if(!DEBUGGING) printf("Label:%s|\nOpcode:%s|\nOperand:%s|\nComment:%s|\n", label, opcode, operand, comment);
@@ -253,6 +295,10 @@ void pass1(FILE * file){
 		fgets(line, sizeof line, file);
 
 		splitString(line, label, opcode, operand, comment);
+
+		if(strcmp(opcode, "RSUB") == 0){
+			zeroOut(operand, 20);
+		}
 		
 		lineNum++;
 	}//end {while not END}
@@ -313,6 +359,8 @@ void initializeErrorTables(){
 	ERRORMESSAGES[0] = "ILLEGAL OPCODE";
 	ERRORMESSAGES[1] = "ILLEGAL SYMBOL";
 	ERRORMESSAGES[2] = "DUPLICATE SYMBOL";
+	ERRORMESSAGES[3] = "UNDEFINED SYMBOL";
+	ERRORMESSAGES[4] = "ILLEGAL OPERAND";
 
 	//Table that will hold a line and the error that's on that line next to each other.
 	ERRORS = (int *)calloc(100, sizeof(int));
@@ -592,4 +640,18 @@ void zeroOut(char * string, int length){
 	}	
 }
 
+	
+//Returns 1 if string has illegal characters, i.e. characters that are not a number or symbol
+int hasIllegalCharacters(char * string){
 
+	if(string[0] > 48 && string[0] < 58) return 1;
+	printf("%d", strlen(string));
+	for(int i = 0; i < strlen(string); i++){
+		if(string[i] < 48 || (string[i] > 57 && string[i] < 65) || (string[i] > 90 && string[i] < 97)){
+			printf("%c is an illegal character at index %d\n", string[i], i);
+			return 1;
+		}
+	}
+
+	return 0;
+}
