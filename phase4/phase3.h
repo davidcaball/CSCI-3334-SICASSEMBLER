@@ -14,6 +14,7 @@ void removeComma(char * string);
 void addBit(char * string);
 void convertStringToHex(char * string);
 void * writeErrors(FILE * file, int lineNumber);
+int containsApostrophe(char * string);
 void * writeToListingFile(FILE * file, int lineNumber,char * line, char * currentInstruction, char * lineAddr, int lineIsComment);
 
 void convertCharToHex(char * string, char * buffer);

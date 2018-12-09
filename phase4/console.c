@@ -58,7 +58,7 @@ int main()
                         commandExecute();
                 }
                 else if(isEqual(args[0], "load") == 0){
-                        commandLoad();
+                        commandLoad(args[1]);
                 }
 
                 // Fallback
@@ -108,6 +108,10 @@ void commandDirectory(){
 }
 
 void commandLoad(char file[]){
+	
+	char line[100];
+	zeroOut(line,100)
+	;
 	FILE * objFile = fopen(file, "r");	
 
 	if (objFile == NULL)
@@ -115,6 +119,24 @@ void commandLoad(char file[]){
 		printf("Cannot open file \n");
 		return;
 	}
+
+
+	fgets(line, sizeof line, objFile);
+
+	//Cleanse of any newline or carriage returns
+	for(int i = 0; i < 100; i++){
+		if(line[i] == '\n' || line[i] == '\r'){
+			line[i] = 0;
+		}
+	}
+
+	// Make sure there is a header record
+	if(line[0] != 'H'){
+		return;
+	}
+
+
+
 
 	
 }
@@ -140,6 +162,7 @@ void commandAssemble(char file[]){
 	pass1(sourceFile);
 
 	FILE * intermFile = fopen("interm.txt", "r");
+
 	pass2(intermFile);
 }
 
