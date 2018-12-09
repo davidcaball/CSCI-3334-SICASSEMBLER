@@ -94,7 +94,7 @@ void pass2(FILE * intermFile){
 			int i = 0;
 			while(i < 7 - strlen(programName)){
 				fputs(" ", objFile);
-				i++
+				i++;
 			}
 			i = 0;
 			while(i < 6 - strlen(operand)){
@@ -581,7 +581,7 @@ char * lengthenToFourBytes(char * buffer, char * string){
 		int i = 0;
 		while(i < numZeroes){
 			buffer[i] = '0';
-			 i++
+			 i++;
 		}
 
 		appendString(buffer, string);

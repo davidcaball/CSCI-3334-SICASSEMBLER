@@ -349,7 +349,7 @@ void initializeErrorTables(){
 	ERRORMESSAGES = (char **)calloc(10, sizeof(char*));
 
 	int i = 0;
-	for(i < 10){
+	while(i < 10){
 		//Allocate memory for individual strings
 		ERRORMESSAGES[i] = (char * )calloc(50, sizeof(char));
 		i++;
