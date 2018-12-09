@@ -123,11 +123,13 @@ void commandLoad(char file[]){
 
 	fgets(line, sizeof line, objFile);
 
-	//Cleanse of any newline or carriage returns
-	for(int i = 0; i < 100; i++){
+	int i = 0;
+	//Cleanse of any newline or carriage return
+	while(i < 100){
 		if(line[i] == '\n' || line[i] == '\r'){
 			line[i] = 0;
 		}
+		i++;
 	}
 
 	// Make sure there is a header record

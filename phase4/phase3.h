@@ -91,15 +91,21 @@ void pass2(FILE * intermFile){
 		//write header record to object program
 			fputs("H", objFile);
 			fputs(toUpperCase(programName), objFile);
-			for(int i = 0; i < 7 - strlen(programName); i++){
+			int i = 0;
+			while(i < 7 - strlen(programName)){
 				fputs(" ", objFile);
+				i++
 			}
-			for(int i = 0; i < 6 - strlen(operand); i++){
+			i = 0;
+			while(i < 6 - strlen(operand)){
 				fputs("0", objFile);
+				i++;
 			}
 			fputs(toUpperCase(operand), objFile);
-			for(int i = 0; i < 6 - strlen(programLength); i++){
+			i = 0;
+			while(i < 6 - strlen(programLength)){
 				fputs("0", objFile);
+				i++;
 			}
 			fputs(toUpperCase(programLength), objFile);
 			fputs("\n", objFile);
@@ -511,12 +517,13 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 
 // Turns all lowercase characters in a char array to uppercase.
 char * toUpperCase(char * string){
-
-	for(int i = 0; string[i] != 0; i++){		
+	int i = 0;
+	while(string[i] != 0){		
 		if(string[i] > 96 && string[i] < 123){
 			printf("Changing %c to %c\n", string[i], string[i] - 32);
 			string[i] = string[i] - 32;
 		}
+		i++;
 	}
 
 	return string;
@@ -525,12 +532,16 @@ char * toUpperCase(char * string){
 
 // Will append string2 to string1, assumes that string1 has memory allocated after its last non-null character
 void appendString(char * string1, char * string2){
+	
 	int i;
-	for(i = 0; i < strlen(string1); i++);
+	while(i < strlen(string1)) i++;
 
-	for(int j = 0; string2[j] != 0; j++){
+
+	int j = 0;
+	while(string2[j] != 0){
 		string1[i] = string2[j];
 		i++;
+		j++;
 	}
 
 	// printf("string1: %s\n", string1);
@@ -547,9 +558,10 @@ char * lengthenToSixBytes(char * buffer, char * string){
 	else{
 		int numZeroes = 6 - strlen(string);
 
-		
-		for(int i = 0; i < numZeroes; i++){
+		int i = 0;
+		while(i < numZeroes){
 			buffer[i] = '0';
+			i++;
 		}
 		appendString(buffer, string);
 		
@@ -566,10 +578,12 @@ char * lengthenToFourBytes(char * buffer, char * string){
 	else{
 		int numZeroes = 4 - strlen(string);
 
-		
-		for(int i = 0; i < numZeroes; i++){
+		int i = 0;
+		while(i < numZeroes){
 			buffer[i] = '0';
+			 i++
 		}
+
 		appendString(buffer, string);
 		
 		return buffer;
@@ -585,9 +599,10 @@ char * lengthenToTwoBytes(char * string, char * buffer){
 	else{
 		int numZeroes = 2 - strlen(string);
 
-		
-		for(int i = 0; i < numZeroes; i++){
+		int i = 0;
+		while(i < numZeroes){
 			buffer[i] = '0';
+			i++;
 		}
 		appendString(buffer, string);
 		
@@ -598,8 +613,10 @@ char * lengthenToTwoBytes(char * string, char * buffer){
 
 //Returns 1 if the string contains an apostrophe
 int containsApostrophe(char * string){
-	for(int i = 0; string[i] != 0; i++){
+	int i = 0;
+	while(string[i] != 0){
 		if(string[i] == '\'') return 1;
+		i++;
 	}
 	return 0;
 }
@@ -607,8 +624,10 @@ int containsApostrophe(char * string){
 
 //Returns 1 if the string contains an apostrophe
 int containsComma(char * string){
-	for(int i = 0; string[i] != 0; i++){
+	int i = 0;
+	while(string[i] != 0){
 		if(string[i] == ',') return 1;
+		i++;
 	}
 	return 0;
 }
@@ -690,11 +709,13 @@ void * writeToListingFile(FILE * file, int lineNumber,char * line, char * curren
 }
 
 void * writeErrors(FILE * file, int lineNumber){
-	for(int i = 0; i < MAXERRORS && ERRORS[i] != -1; i+=2){
+	int i = 0;
+	while(i < MAXERRORS && ERRORS[i] != -1){
 		if(ERRORS[i] == lineNumber){
 			sprintf(currentError,"Error: %s\n", ERRORMESSAGES[ERRORS[i + 1]]);
 			fputs(currentError, file);
 			zeroOut(currentError, 50);
 		}
+		i+=2;
 	}
 }
