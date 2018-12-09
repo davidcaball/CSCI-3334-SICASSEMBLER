@@ -188,7 +188,6 @@ void pass2(FILE * intermFile){
 				}//end {if opcode found}
 				else{
 					//SET ERROR FLAG
-					
 				}
 
 
@@ -356,73 +355,81 @@ void pass2(FILE * intermFile){
 	//end pass 2
 
 		
+		fclose(objFile);
 
+		// free(ERRORS);
+
+		// for(int i = 0; i < 10;i++){
+	 //        free(ERRORMESSAGES[i]);
+	 //    }
+
+	 //    free(ERRORMESSAGES);
 }
 
-int main(){
+// int main(){
 
-	// printf("Starting Main...\n");
+// 	// printf("Starting Main...\n");
 
-	// char line[256];
-	// char label[20];
-	// char opcode[20];
-	// char operand[20];
-	// char lineAddr[20];
-	// char opcodeHex[20];
-	// char comment[256];
+// 	// char line[256];
+// 	// char label[20];
+// 	// char opcode[20];
+// 	// char operand[20];
+// 	// char lineAddr[20];
+// 	// char opcodeHex[20];
+// 	// char comment[256];
 	
-	// printf("Creating Int...\n");
+// 	// printf("Creating Int...\n");
 
-	// int lineIsComment = 0;
+// 	// int lineIsComment = 0;
 
-	// printf("Done Creating Int...\n");
+// 	// printf("Done Creating Int...\n");
 
-	// char  test[256] = "0x1030:0xA4:0:WORD;ZERO    WORD    0";
+// 	// char  test[256] = "0x1030:0xA4:0:WORD;ZERO    WORD    0";
  
- // 	printf("Starting SplitString2...\n");
+//  // 	printf("Starting SplitString2...\n");
 
-	// splitString2(test, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
-
-
-
-	// printf("Line: %s\n\n", test);
-
-	// if(lineIsComment) printf("LineIsComment: True\n");
-	// else printf("LineIsComment: False\n");
-
-
-	// printf("lineAddr: |%s|\n", lineAddr);
-	// printf("opcodeHex: |%s|\n", opcodeHex);
-	// printf("label: |%s|\n", label);
-	// printf("opcode: |%s|\n", opcode);
-	// printf("operand: |%s|\n", operand);
-	// printf("comment: |%s|\n", comment);
-
-	// for(int i = 0; i < 10; i++){
-	// 	printf("lineAddr[%d]: %c\n", i, lineAddr[i]);
-	// }
+// 	// splitString2(test, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
 
 
 
-	FILE * file = fopen("./source.asm", "r");
-	pass1(file);
-	FILE * file2 = fopen("./interm.txt", "r");
-	pass2(file2);
+// 	// printf("Line: %s\n\n", test);
+
+// 	// if(lineIsComment) printf("LineIsComment: True\n");
+// 	// else printf("LineIsComment: False\n");
 
 
-	// char symbol[10] = "THREEdfdfd";
-	// char address[10];
+// 	// printf("lineAddr: |%s|\n", lineAddr);
+// 	// printf("opcodeHex: |%s|\n", opcodeHex);
+// 	// printf("label: |%s|\n", label);
+// 	// printf("opcode: |%s|\n", opcode);
+// 	// printf("operand: |%s|\n", operand);
+// 	// printf("comment: |%s|\n", comment);
 
-	// zeroOut(address, 10);
-
-	// getSymbolAddress(&SYMTAB, symbol, address);
-
-	// printf("ADDRESS: %s|\n", address);
-
-	return 0;
+// 	// for(int i = 0; i < 10; i++){
+// 	// 	printf("lineAddr[%d]: %c\n", i, lineAddr[i]);
+// 	// }
 
 
-}
+
+// 	FILE * file = fopen("./source.asm", "r");
+// 	pass1(file);
+// 	FILE * file2 = fopen("./interm.txt", "r");
+// 	pass2(file2);
+
+
+// 	// char symbol[10] = "THREEdfdfd";
+// 	// char address[10];
+
+// 	// zeroOut(address, 10);
+
+// 	// getSymbolAddress(&SYMTAB, symbol, address);
+
+// 	// printf("ADDRESS: %s|\n", address);
+
+// 	return 0;
+
+
+// }
 
 
 

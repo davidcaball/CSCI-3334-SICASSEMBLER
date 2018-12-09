@@ -24,6 +24,8 @@ int hasIllegalCharacters(char * string);
 char ** OPTAB;
 char ** ERRORMESSAGES;
 int * ERRORS; 
+const int MAXERRORS = 300;
+
 char programName[6];
 char programLength[6];
 struct symTab SYMTAB;
@@ -359,9 +361,9 @@ void initializeErrorTables(){
 	ERRORMESSAGES[4] = "ILLEGAL OPERAND";
 
 	//Table that will hold a line and the error that's on that line next to each other.
-	ERRORS = (int *)calloc(100, sizeof(int));
+	ERRORS = (int *)calloc(MAXERRORS, sizeof(int));
 
-	for(int i = 0; i < 100; i++){
+	for(int i = 0; i < MAXERRORS; i++){
 		ERRORS[i] = -1;
 	}
 
@@ -369,6 +371,8 @@ void initializeErrorTables(){
 
 //Inserts an error to the error table
 void insertError(int line, int errorCode){
+
+	printf("INSERTING ERROR %d at line %d", errorCode, line);
 
 	for(int i = 0; i < 100; i += 2){
 		if(ERRORS[i] == -1){
