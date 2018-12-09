@@ -91,36 +91,42 @@ void pass2(FILE * intermFile){
 		//write header record to object program
 			fputs("H", objFile);
 			fputs(toUpperCase(programName), objFile);
+
+	
+
 			int i = 0;
 			while(i < 7 - strlen(programName)){
 				fputs(" ", objFile);
 				i++;
 			}
+
 			i = 0;
 			while(i < 6 - strlen(operand)){
 				fputs("0", objFile);
 				i++;
 			}
 			fputs(toUpperCase(operand), objFile);
+
 			i = 0;
 			while(i < 6 - strlen(programLength)){
 				fputs("0", objFile);
 				i++;
 			}
+
 			fputs(toUpperCase(programLength), objFile);
 			fputs("\n", objFile);
-
-		
 
 		//initialize first text record
 		appendString(prefix, "T");
 		appendString(prefix, lengthenToSixBytes(buffer, lineAddr + 2));
 
+
 		printf("%s", prefix);
 
 		lineNumber++;
-		fgets(line, sizeof line, intermFile);
+		fgets(line, sizeof line, intermFile);;
 		splitString2(line, lineAddr, opcode, label, opcodeHex, operand, comment, &lineIsComment);
+
 
 
 		//while OPCODE != END
@@ -533,7 +539,7 @@ char * toUpperCase(char * string){
 // Will append string2 to string1, assumes that string1 has memory allocated after its last non-null character
 void appendString(char * string1, char * string2){
 	
-	int i;
+	int i = 0;
 	while(i < strlen(string1)) i++;
 
 
