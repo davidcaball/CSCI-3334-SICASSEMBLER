@@ -85,8 +85,6 @@ void initializeSymbolTable(struct symTab * s){
 	//Set length of array to initial size
 	s->length = INITSIZE;
 
-	printf("s.length: %d\n", s->length);
-	printf("INITSIZE: %d\n", INITSIZE);
 
 
 	//Allocate that much memory
@@ -125,6 +123,7 @@ void writeSymbolTableToFile(struct symTab * s, FILE * file){
 		fputs("\n", file);
 
 		i+=2;
+					
 	}
 }
 
@@ -143,7 +142,7 @@ void printSymbolTable(struct symTab * s){
 		i+= 2;
 	}
 
-
+	printf("\n\n");
 	debugPrint("Printing Done..\n");
 }
 

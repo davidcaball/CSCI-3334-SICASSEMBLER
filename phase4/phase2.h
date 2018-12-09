@@ -20,6 +20,8 @@ void initializeErrorTables();
 void insertError();
 void outputErrorsToFile();
 int hasIllegalCharacters(char * string);
+void clearErrorTable();
+int getNumErrors();
 
 char ** OPTAB;
 char ** ERRORMESSAGES;
@@ -75,7 +77,6 @@ int LOCCTR = 0;
 
 void pass1(FILE * file){
 
-	printf("HERE\n");
 
 	FILE * intermFile;
 	FILE * symbolFile;
@@ -268,6 +269,13 @@ void pass1(FILE * file){
 				}
 	
 				else{
+
+					sprintf(opHexFormatted, "%s:", "0000");
+					fputs(opHexFormatted, intermFile);
+					fputs(operand, intermFile);
+					fputs(":", intermFile);
+					fputs(opcode, intermFile);
+					fputs(";", intermFile);
 					//Flag error representing invalid opcode
 					insertError(lineNum, 0);
 				}
@@ -679,4 +687,28 @@ int hasIllegalCharacters(char * string){
 	}
 
 	return 0;
+}
+
+
+int getNumErrors(){
+	int i = 0;
+	int numErrors = 0;
+
+	while(i < MAXERRORS){
+		if(ERRORS[i] != -1){
+			printf("ERRORS[%d]: %d\n", i, ERRORS[i]);
+			numErrors++;
+		}
+		i+=2;
+	}
+	return numErrors;
+}
+
+void clearErrorTable(){
+	int i = 0;
+
+	while(i < MAXERRORS){
+		ERRORS[i] = -1;
+		i++;
+	}
 }

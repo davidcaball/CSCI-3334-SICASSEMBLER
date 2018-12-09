@@ -133,7 +133,7 @@ void pass2(FILE * intermFile){
 		//while OPCODE != END
 		while(strcmp(opcode, "END") != 0){
 
-			
+
 		// for(int i = 0; i < 30; i++){
 			// printf("OPCODE: %s\n", opcode);
 			// printf("String length + 6: %d\n", strlen(suffix) + 6);
@@ -158,8 +158,9 @@ void pass2(FILE * intermFile){
 							getSymbolAddress(&SYMTAB, operand, symbolAddress);
 						}
 						else if(containsComma(operand)){
+							
 							removeComma(operand);
-
+						
 							if(symTabContains(&SYMTAB, operand)){
 								//store symbol value as operand address
 								getSymbolAddress(&SYMTAB, operand, symbolAddress);
@@ -169,11 +170,14 @@ void pass2(FILE * intermFile){
 
 						}
 						else{
-							printf("COULDNT FIND %s\n", operand);
-							insertError(lineNumber, 3);
-							//store 0 as operand address
-							strcpy(symbolAddress, "0000");
-							//set error flag, undefined tymbol
+
+							if(!containsApostrophe(operand)){
+								
+								insertError(lineNumber, 3);
+								//store 0 as operand address
+								strcpy(symbolAddress, "0000");
+								//set error flag, undefined tymbol
+							}
 
 						}//end if {symbol}
 					}
@@ -364,8 +368,21 @@ void pass2(FILE * intermFile){
 		//write last listing line
 		//end pass 2
 
-		
+		fclose(listingFile);
 		fclose(objFile);
+		fclose(intermFile);
+
+		int numErrors = getNumErrors();
+		
+		if(numErrors == 0){
+			printf("0 Errors Found. Assembled Succesfully..\n");
+		}
+		else{
+			printf("%d Errors Found. Asemmbly Unscuccesful..\n", numErrors);
+		}
+
+		clearErrorTable();
+
 }
 
 // int main(){
@@ -442,12 +459,14 @@ void splitString2(char * line, char * lineAddr, char * opcode, char * label, cha
 			break;
 		}
 
+
+
 		i++;
 	}
 
 	strcpy(comment, line + i + 1);
 
-
+	if(strcmp(opcode, "RSUB") == 0) zeroOut(operand, 20);
 }
 
 // Turns all lowercase characters in a char array to uppercase.
@@ -559,11 +578,13 @@ int containsApostrophe(char * string){
 
 //Returns 1 if the string contains an apostrophe
 int containsComma(char * string){
+	
 	int i = 0;
 	while(string[i] != 0){
 		if(string[i] == ',') return 1;
 		i++;
 	}
+	
 	return 0;
 }
 
@@ -638,12 +659,12 @@ void * writeToListingFile(FILE * file, int lineNumber,char * line, char * curren
 
 	if(lineIsComment){
 		
-		sprintf(currentLine, "Line %d: %s\n", lineNumber, line);
+		sprintf(currentLine, "Line %d: %s", lineNumber, line);
 		fputs(currentLine, file);
 	}
 	else{
 	
-		sprintf(currentLine, "Line %d: %s %s %s\n", lineNumber, lineAddr, currentInstruction, line);
+		sprintf(currentLine, "Line %d: %s %s %s", lineNumber, lineAddr, currentInstruction, line);
 		fputs(currentLine, file);
 	}
 }
@@ -652,12 +673,16 @@ void * writeToListingFile(FILE * file, int lineNumber,char * line, char * curren
 //Will take a file and a line number and will write any errors found on that line to the file
 void * writeErrors(FILE * file, int lineNumber){
 	int i = 0;
+	int hasError = 0;
 	while(i < MAXERRORS && ERRORS[i] != -1){
 		if(ERRORS[i] == lineNumber){
+			hasError =1;
 			sprintf(currentError,"Error: %s\n", ERRORMESSAGES[ERRORS[i + 1]]);
 			fputs(currentError, file);
 			zeroOut(currentError, 50);
 		}
 		i+=2;
 	}
+
+	if(hasError) fputs("\n", file);
 }
