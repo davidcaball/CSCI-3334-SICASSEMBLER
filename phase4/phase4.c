@@ -18,7 +18,9 @@ int isEqual(char * string1, char * string2);
 int LOADEDADDRESS = -1;
 
 int main()
-{
+{	
+		SICInit();
+
         char input[200]; // char array for user input
         char args[3][30];
 
@@ -116,7 +118,7 @@ void commandExecute(){
 		ADDRESS Add = (ADDRESS)LOADEDADDRESS;
 		SICRun(&Add, 0);	
 	}
-	printf("Sorry, this command is not available yet");	
+	
 }
 
 void commandDirectory(){
@@ -233,7 +235,7 @@ void commandDump(char * start, char * end){
 		GetMem(i, &byte, 0);
 
 		if(numInLine == 1){
-			printf("%#X ", i, byte);
+			printf("%#X| ", i, byte);
 		}
 
 		if(byte < 16){
