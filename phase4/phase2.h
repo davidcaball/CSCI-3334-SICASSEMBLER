@@ -367,7 +367,7 @@ void initializeErrorTables(){
 	ERRORMESSAGES[5] = "TOO MANY SYMBOLS IN SOURCE PROGRAM";
 	ERRORMESSAGES[6] = "PROGRAM TOO LONG";
 	ERRORMESSAGES[7] = "MISSING OR MISSPLACED START DIRECTIVE";
-	
+	ERRORMESSAGES[8] = "ODD LENGTH HEX STRING IN NYTE STATEMENT";
 
 
 	//Table that will hold a line and the error that's on that line next to each other.

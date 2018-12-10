@@ -206,7 +206,38 @@ void commandDebug(){
 }
 
 void commandDump(char * start, char * end){
-	printf("Sorry, this command is not available yet\n");	
+	printf("DUMPING FROM %s to %s\n", start, end);
+	int startAddr = 0;
+	int endAddr = 0;
+
+	sscanf(start, "%x", &startAddr);
+	sscanf(end, "%x", &endAddr);
+
+
+	if(startAddr > endAddr){
+		printf("Invalid Addresses...\n");
+		return;
+	}
+
+	int i = startAddr;
+	int numInLine = 0;
+	while(i < endAddr){
+		BYTE byte;
+		char line[100];
+
+		GetMem(i, &byte, 0);
+
+		sprintf(line, "%#X 0%X ", i, byte);
+		printf("%s", line);
+		i++;
+		numInLine++;
+		if(numInLine == 16){
+			printf("\n");
+			numInLine = 0;
+		}
+	}
+
+
 }
 
 void commandAssemble(char file[]){

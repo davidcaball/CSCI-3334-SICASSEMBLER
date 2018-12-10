@@ -209,9 +209,12 @@ void pass2(FILE * intermFile){
 					//convert constant to object code
 					zeroOut(currentInstruction, 10);
 
+					// printf("OPCODE IS %s\n", opcode);
+
 					if(containsApostrophe(operand) && operand[0] == 'C'){
 						// printf("CONTAINS APOSTROPHE!\n\n");
 						int i = 2;
+
 
 						while(operand[i] != 0){
 
@@ -228,6 +231,11 @@ void pass2(FILE * intermFile){
 						}
 					}
 					else if(containsApostrophe(operand) && operand[0] == 'X'){
+
+						if(strlen(operand) % 2 == 0){
+							insertError(lineNumber, 8);
+						}
+						
 						removeApostrophes(operand, buffer);
 						appendString(currentInstruction, toUpperCase(buffer));
 					}
@@ -365,7 +373,11 @@ void pass2(FILE * intermFile){
 		fputs("E", objFile);
 		lengthenToSixBytes(buffer, startAddress);
 		fputs(buffer, objFile);
+
 		//write last listing line
+		writeToListingFile(listingFile, lineNumber, comment, currentInstruction, lineAddr, lineIsComment);
+		writeErrors(listingFile, lineNumber);
+
 		//end pass 2
 
 		fclose(listingFile);
@@ -379,12 +391,13 @@ void pass2(FILE * intermFile){
 		}
 		else{
 			printf("%d Errors Found. Asemmbly Unscuccesful..\n", numErrors);
+			remove("obj.txt");
 		}
 
 		clearErrorTable();
 
 }
-
+ 
 // int main(){
 
 
