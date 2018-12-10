@@ -213,6 +213,8 @@ void commandDump(char * start, char * end){
 	sscanf(start, "%x", &startAddr);
 	sscanf(end, "%x", &endAddr);
 
+	char line[100];
+	zeroOut(line, 50);
 
 	if(startAddr > endAddr){
 		printf("Invalid Addresses...\n");
@@ -220,21 +222,40 @@ void commandDump(char * start, char * end){
 	}
 
 	int i = startAddr;
-	int numInLine = 0;
+	int numInLine = 1;
+
 	while(i < endAddr){
-		BYTE byte;
-		char line[100];
+		BYTE byte = 0;
+		char value[50];
+		zeroOut(value, 50);
 
 		GetMem(i, &byte, 0);
 
-		sprintf(line, "%#X 0%X ", i, byte);
-		printf("%s", line);
-		i++;
-		numInLine++;
+		if(numInLine == 1){
+			printf("%#X ", i, byte);
+		}
+
+		if(byte < 16){
+			printf("0");
+		}
+
+
+		printf("%X ", byte);
+	
+
+
+
 		if(numInLine == 16){
 			printf("\n");
 			numInLine = 0;
+			zeroOut(line, 100);
 		}
+
+		
+
+		i++;
+		numInLine++;
+		
 	}
 
 

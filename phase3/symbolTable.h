@@ -1,6 +1,6 @@
 
 //Initial size of array for symbol table
-int INITSIZE = 40;
+int INITSIZE = 1000;
 int DEBUGGING = 0;
 struct symTab{	
 	int length;
@@ -22,14 +22,15 @@ int symTabContains(struct symTab * s, char * symbol);
 void addToSymTab(struct symTab * s, char * symbol, int LOCCTR){
 	if(DEBUGGING) printf("Adding %s to Symbol Table at Location %d...\n", symbol, LOCCTR);
 
-
-	for(int i = 0; i < s->length; i+= 2){
+	int i = 0;
+	while(i < s->length){
 		if(s->array[i][0] == 0){
 			strcpy(s->array[i], symbol);
 
 			sprintf(s->array[i + 1], "%x", LOCCTR);
 			break;
 		}
+		i+= 2;
 	}
 
 	debugPrint("Done Adding to Symbol Table...\n");
@@ -39,10 +40,12 @@ void addToSymTab(struct symTab * s, char * symbol, int LOCCTR){
 //Adds a symbol to the symbol table
 char * getSymbolAddress(struct symTab * s, char * symbol, char * address){
 
-	for(int i = 0; i < s->length; i+= 2){
+	int i = 0;
+	while(i < s->length){
 		if(strcmp(s->array[i], symbol) == 0){
 			strcpy(address, s->array[i + 1]);
 		}
+		i+= 2;
 	}
 
 }
@@ -56,7 +59,8 @@ int symTabContains(struct symTab * s, char * symbol){
 	if(DEBUGGING) printf("Searching for Symbol: %s\n", symbol);
 
 	//TODO: Implement this
-	for(int i = 0; i < s->length; i+=2){
+	int i = 0;
+	while(i < s->length){
 
 		if(DEBUGGING) printf("Current Element: %d\n", i);
 
@@ -66,6 +70,8 @@ int symTabContains(struct symTab * s, char * symbol){
 			if(DEBUGGING) printf("Symbol: %s Found\n", symbol);
 			return 1;
 		}
+
+		i+=2;
 	}
 
 		if(DEBUGGING) printf("Symbol: %s Not Found\n", symbol);
@@ -79,22 +85,27 @@ void initializeSymbolTable(struct symTab * s){
 	//Set length of array to initial size
 	s->length = INITSIZE;
 
-	printf("s.length: %d\n", s->length);
-	printf("INITSIZE: %d\n", INITSIZE);
 
 
 	//Allocate that much memory
 	s->array = (char **)calloc(s->length, sizeof(char*));
 
-	for(int i = 0; i < s->length; i++){
+	int i = 0;
+	while(i < s->length){
 		//Allocate memory for individual strings
 		s->array[i] = (char * )calloc(12, sizeof(char));
+		 i++;
 	}
 
-	for(int i = 0; i < s->length; i++){
-		for(int j = 0; j < 12; j++){
+	i = 0;
+	int j = 0;
+	while(i < s->length){
+		j = 0;
+		while(j < 12){
 			s->array[i][j] = 0;
+			j++;
 		}
+		i++;
 	}
 
 
@@ -104,10 +115,15 @@ void initializeSymbolTable(struct symTab * s){
 
 void writeSymbolTableToFile(struct symTab * s, FILE * file){
 
-	for(int i = 0; i < s->length; i+=2){
+	int i = 0;
+	while(i < s->length){
 		fputs(s->array[i], file);
+		fputs("|", file);
 		fputs(s->array[i + 1], file);
 		fputs("\n", file);
+
+		i+=2;
+					
 	}
 }
 
@@ -115,15 +131,18 @@ void writeSymbolTableToFile(struct symTab * s, FILE * file){
 //DEBUGCODE
 
 void printSymbolTable(struct symTab * s){
-	debugPrint("Printing Symbol Table..\n");
+	printf("Symbol Table\n\n");
 
 	printf("%12s %11s\n", "SYMBOL", "ADDRESS");
 	printf("---------------------------\n");
-	for(int i = 0; i < s->length; i+= 2){
+
+	int i = 0;
+	while( i < s->length && s->array[i][0] != 0){
 		printf("%2d: %9s %5s \n", i / 2 + 1, s->array[i], s->array[i + 1]);
+		i+= 2;
 	}
 
-
+	printf("\n\n");
 	debugPrint("Printing Done..\n");
 }
 

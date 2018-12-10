@@ -37,40 +37,11 @@ struct symTab SYMTAB;
 int LOCCTR = 0;
 
 
-// char * OPTAB[] = 
-
+// // char * OPTAB[] = 
 // int main(){
 
-
-// 	// char label[20];
-// 	// char opcode[20];
-// 	// char operand[20]; 
-// 	// char comment[100]; 
-
-// 	// zeroOut(label, 20);
-// 	// zeroOut(opcode, 20);
-// 	// zeroOut(operand, 20);
-// 	// zeroOut(comment, 100);
-
-// 	// splitString("CLOOP   JSUB    RDREC		READ INPUT RECORD",label, opcode, operand, comment);
-
-
-// 	// printf("Label:%s|\nOpcode:%s|\nOperand:%s|\nComment:%s|\n", label, opcode, operand, comment);
-
-
-// 	FILE * file;
-
-// 	file = fopen("./source.asm.txt", "r");
-
-
-	
-
-
+// 	FILE * file = fopen("IncorrectSource.asm", "r");
 // 	pass1(file);
-
-// 	printf("Program Name: %s", programName);
-	
-
 
 // 	return 0;
 // }
@@ -156,13 +127,22 @@ void pass1(FILE * file){
 
 		//printf("TRUE");
 		//begin
+			long n = 0;
 			//save #[OPERAND] as starting address
-			long n = strtol(operand, NULL, 16);
+			if(operand[0] < 48 || operand[0] > 90){
+				insertError(1,4);
+			}else{
+			
+			
+			}
+			printf("opeand: %s", operand);
+			n = strtol(operand, NULL, 16);
 			startingAddress = n;
 			//initialize LOCCTR to starting address
 			LOCCTR = startingAddress;
 			strcpy(programName, label);
 			//write line to intermediate file
+
 			
 			
 			//read next input line
