@@ -104,6 +104,7 @@ void commandExit(){
 
 
 void commandExecute(){
+	printf("Loaded Address: %x", LOADEDADDRESS);
 	if(LOADEDADDRESS == -1)
 	{
 		printf("No Program has been loaded..\n");
